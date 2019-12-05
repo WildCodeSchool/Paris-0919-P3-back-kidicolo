@@ -1,0 +1,19 @@
+{
+  "name": "paris-0919-p3-back-kidicolo",
+  "version": "1.0.0",
+  "description": "Paris-0919-P3-back-kidicolo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WildCodeSchool/Paris-0919-P3-back-kidicolo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WildCodeSchool/Paris-0919-P3-back-kidicolo/issues"
+  },
+  "homepage": "https://github.com/WildCodeSchool/Paris-0919-P3-back-kidicolo#readme"
+}
