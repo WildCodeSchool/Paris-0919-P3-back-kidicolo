@@ -2,10 +2,11 @@ const express = require("express")
 const cors = require("cors")
 const morgan = require("morgan")
 const bodyParser = require("body-parser")
+
 const connection = require("./config/config")
 const routes = require("./routes/index")
 
-const PORT = "4242"
+const PORT = process.env.PORT || "2121"
 
 const app = express()
 

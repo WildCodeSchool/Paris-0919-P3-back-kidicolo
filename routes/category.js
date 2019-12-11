@@ -1,6 +1,7 @@
 const express = require("express")
 const connection = require("../config/config")
 const router = express.Router()
+
 //select all category
 router.get("/", (req, res) => {
   connection.query("SELECT * FROM Categorie", (err, results) => {
