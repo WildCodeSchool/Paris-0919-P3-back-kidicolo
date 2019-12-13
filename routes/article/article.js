@@ -1,24 +1,22 @@
-const express = require("express")
-const connection = require("../../config/config")
+const express = require("express");
+const connection = require("../../config/config");
 
-const router = express.Router()
+const router = express.Router();
 
 //select all article
 router.get("/", (req, res) => {
   connection.query("SELECT * FROM Article", (err, results) => {
     if (err) {
-      res
-        .status(500)
-        .send(`Erreur lors de la récupération de la liste des users !!`)
+      res.status(500).send(`Erreur lors de la récupération des articles!`);
     } else {
-      res.status(200).json(results)
+      res.status(200).json(results);
     }
-  })
-})
+  });
+});
 
 // get all article form subCat
 router.get("/subcat/:id", (req, res) => {
-  const idSubCat = req.params.id
+  const idSubCat = req.params.id;
   connection.query(
     "SELECT * FROM Article WHERE id_subcategorie = ?",
     idSubCat,
@@ -26,27 +24,27 @@ router.get("/subcat/:id", (req, res) => {
       if (err) {
         res
           .status(500)
-          .send(`Erreur lors de la récupération de la liste des users !!`)
+          .send(
+            `Erreur lors de la récupération  des articles lors de la séléction de la sous catégorie !`
+          );
       } else {
-        res.status(200).json(results)
+        res.status(200).json(results);
       }
     }
-  )
-})
+  );
+});
 
 //select one article
 router.get("/:id", (req, res) => {
-  const id = req.params.id
+  const id = req.params.id;
   connection.query("SELECT * FROM Article WHERE id = ?", id, (err, results) => {
     if (err) {
-      res
-        .status(500)
-        .send(`Erreur lors de la récupération de la liste des users !!`)
+      res.status(500).send(`Erreur lors de la récupération de l'article!`);
     } else {
-      res.status(200).json(results)
+      res.status(200).json(results);
     }
-  })
-})
+  });
+});
 
 //////////////////////Gérer un article/////////////////////
 router.route("/signup").post((req, res) => {
@@ -54,9 +52,7 @@ router.route("/signup").post((req, res) => {
   connection.query("INSERT INTO Article SET ?", newData, (err, results) => {
     console.log(err);
     if (err) {
-      res
-        .status(500)
-        .send(`Erreur lors de l'ajout de l'article!`);
+      res.status(500).send(`Erreur lors de l'ajout de l'article!`);
     } else {
       res.status(200).json(results);
     }
@@ -72,9 +68,7 @@ router.route("/switch/:id").put((req, res) => {
     (err, results) => {
       console.log(err);
       if (err) {
-        res
-          .status(500)
-          .send(`Erreur lors de la récupération de la liste des users !!`);
+        res.status(500).send(`Erreur lors de la modification de l'article !`);
       } else {
         res.status(200).json(results);
       }
@@ -83,24 +77,15 @@ router.route("/switch/:id").put((req, res) => {
 });
 
 router.route("/delete/:id").delete((req, res) => {
-
   const id = req.params.id;
-  connection.query(
-    "DELETE FROM Article WHERE id = ? ",
-     id,
-    (err, results) => {
-      console.log(err);
-      if (err) {
-        res
-          .status(500)
-          .send(`Erreur lors de la récupération de la liste des users !!`);
-      } else {
-        res.status(200).json(results);
-      }
+  connection.query("DELETE FROM Article WHERE id = ? ", id, (err, results) => {
+    console.log(err);
+    if (err) {
+      res.status(500).send(`Erreur lors de la suppression de l'article !`);
+    } else {
+      res.status(200).json(results);
     }
-  );
+  });
 });
 
-
-
-module.exports = router
+module.exports = router;
