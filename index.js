@@ -21,6 +21,7 @@ app.use(bodyParser.json())
 app.use("/article", routes.article)
 app.use("/category", routes.category)
 app.use("/subcategory", routes.subcategory)
+app.use("/adduser", routes.adduser)
 
 app.get("/", (req, res) => {
   res.send("je suis dans la route /")
