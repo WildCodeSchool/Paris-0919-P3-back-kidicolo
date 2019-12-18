@@ -5,7 +5,7 @@ const router = express.Router();
 
 //select all article
 router.get("/", (req, res) => {
-  connection.query("SELECT * FROM Article", (err, results) => {
+  connection.query("SELECT * FROM Article INNER JOIN Photos ON Article.id = Photos.id", (err, results) => {
     if (err) {
       res.status(500).send(`Erreur lors de la récupération des articles!`);
     } else {
