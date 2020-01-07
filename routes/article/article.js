@@ -47,7 +47,7 @@ router.get("/:id", (req, res) => {
 });
 
 //////////////////////Gérer un article/////////////////////
-router.route("/signup").post((req, res) => {
+router.route("/addarticle").post((req, res) => {
   const newData = req.body;
   connection.query("INSERT INTO Article SET ?", newData, (err, results) => {
     console.log(err);

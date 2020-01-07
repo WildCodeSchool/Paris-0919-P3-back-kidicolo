@@ -21,8 +21,8 @@ router.route("/getinfo/:id").get((req, res) => {
 
 router.route("/signup").post((req, res) => {
   const user = {
-    name: req.body.name,
-    email: req.body.email,
+    firstname: req.body.firstname,
+    mail: req.body.mail,
     lastname: req.body.lastname,
     password:  bcrypt.hashSync(req.body.password, 10),
     mobile: req.body.mobile,
