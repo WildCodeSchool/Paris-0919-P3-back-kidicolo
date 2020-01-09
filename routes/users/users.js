@@ -54,7 +54,7 @@ router.route("/login").post((req, res) => {
       return res.status(401).send('Unauthorized user')
     }
     const passwordIsValid = bcrypt.compareSync(password, result[0].password);
-    if (!passwordIsValid){
+    if (!passwordIsValid  || result.length < 0){
       return res.status(401).send({ auth: false, token: null });
     }else{
     const token = jwt.sign(
