@@ -46,6 +46,17 @@ router.get("/:id", (req, res) => {
   });
 });
 
+router.get("/article/:name", (req, res) => {
+  const name = req.params.name;
+  connection.query("SELECT * FROM Article WHERE name = ?", name, (err, results) => {
+    if (err) {
+      res.status(500).send(`Erreur lors de la récupération de l'article!`);
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+
 //////////////////////Gérer un article/////////////////////
 router.route("/signup").post((req, res) => {
   const newData = req.body;
