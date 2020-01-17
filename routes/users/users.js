@@ -7,7 +7,7 @@ const jwtSecret = process.env.jwtSecret
 
 router.route("/getinfo/:id").get((req, res) => {
   const id = req.params.id;
-  connection.query("SELECT * FROM User where id = ?", id, (err, results) => {
+  connection.query("SELECT * FROM Users where id = ?", id, (err, results) => {
     console.log(err);
     if (err) {
       res
@@ -26,10 +26,10 @@ router.route("/signup").post((req, res) => {
     lastname: req.body.lastname,
     password: bcrypt.hashSync(req.body.password, 10),
     mobile: req.body.mobile,
-    address: req.body.address,
+    location: req.body.location,
     photo_user: req.body.photo_user
   };
-  connection.query("INSERT INTO User SET ?", user, (err, results) => {
+  connection.query("INSERT INTO Users SET ?", user, (err, results) => {
     console.log(err);
     if (err) {
       res
@@ -47,7 +47,7 @@ router.route("/signup").post((req, res) => {
 router.route("/login").post((req, res) => {
   const mail = req.body.mail
   const password = req.body.password 
-  connection.query(`SELECT * FROM  User WHERE mail = ?`, mail, (err, result)=>{
+  connection.query(`SELECT * FROM  Users WHERE mail = ?`, mail, (err, result)=>{
     if (err) {
       return res.status(500).send(err)
     } else if (!result[0]){
@@ -83,12 +83,12 @@ router.route("/switch/:id").put((req, res) => {
     lastname: req.body.lastname,
     password: bcrypt.hashSync(req.body.password, 10),
     mobile: req.body.mobile,
-    address: req.body.address,
+    location: req.body.location,
     photo_user: req.body.photo_user
   };
   const id = req.params.id;
   connection.query(
-    "UPDATE  User  SET ? WHERE id = ? ",
+    "UPDATE  Users  SET ? WHERE id = ? ",
     [user, id],
     (err, results) => {
       console.log(err);
@@ -105,7 +105,7 @@ router.route("/switch/:id").put((req, res) => {
 
 router.route("/delete/:id").delete((req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM User WHERE id = ? ", id, (err, results) => {
+  connection.query("DELETE FROM Users WHERE id = ? ", id, (err, results) => {
     console.log(err);
     if (err) {
       res

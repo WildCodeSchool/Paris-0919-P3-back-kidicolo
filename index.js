@@ -17,6 +17,8 @@ app.use("/article", routes.article)
 app.use("/category", routes.category)
 app.use("/subcategory", routes.subcategory)
 app.use("/adduser", routes.adduser)
+app.use("/age", routes.age)
+app.use("/gender", routes.gender)
 
 app.get("/", (req, res) => {
   res.send("je suis dans la route /")
