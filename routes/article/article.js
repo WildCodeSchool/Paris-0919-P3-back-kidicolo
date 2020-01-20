@@ -46,13 +46,17 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.get("/article/:name", (req, res) => {
-  const name = req.params.name;
-  connection.query("SELECT * FROM Article WHERE name = ?", name, (err, results) => {
+router.post("/search", (req, res) => {
+  const name = req.body.name;
+  console.log(req.body)
+
+  connection.query("SELECT * FROM Article", (err, results) => {
     if (err) {
       res.status(500).send(`Erreur lors de la récupération de l'article!`);
     } else {
-      res.status(200).json(results);
+      // console.log(results)
+      const resFilter = results.filter(elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1   )
+      res.status(200).json(resFilter);
     }
   });
 });
@@ -65,6 +69,7 @@ router.route("/signup").post((req, res) => {
     if (err) {
       res.status(500).send(`Erreur lors de l'ajout de l'article!`);
     } else {
+      console.log(results)
       res.status(200).json(results);
     }
   });
