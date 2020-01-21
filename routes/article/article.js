@@ -14,11 +14,11 @@ router.get("/", (req, res) => {
   });
 });
 
-// get all article form subCat
+// get all article from subCat
 router.get("/subcat/:id", (req, res) => {
   const idSubCat = req.params.id;
   connection.query(
-    "SELECT * FROM Article WHERE id_subcategorie = ?",
+    "SELECT * FROM Article_subcategorie JOIN Article ON Article_subcategorie.id_article = Article.id WHERE Article_subcategorie.id_subcategorie = ?",
     idSubCat,
     (err, results) => {
       if (err) {
