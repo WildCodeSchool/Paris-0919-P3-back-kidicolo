@@ -1,6 +1,5 @@
 const express = require("express");
 const connection = require("../../config/config");
-
 const router = express.Router();
 
 //select all article
@@ -46,10 +45,57 @@ router.get("/:id", (req, res) => {
   });
 });
 
+////////////////////// Route SearchBar //////////////////////////
 router.post("/search", (req, res) => {
   const name = req.body.name;
+  const idSubcat = req.body.idSubcat
   console.log(req.body)
-
+  // if (idSubcat = 1) {
+  //   connection.query("SELECT * FROM Article_subcategorie JOIN Article ON Article_subcategorie.id_article = Article.id WHERE Article_subcategorie.id_subcategorie = 1", (err, results) =>{
+  //     if (err){
+  //       res.status(500).send(`Erreur lors de la récupération de l'article!`);
+  //     } else {
+  //       const resFilter = results.filter(elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1   )
+  //     res.status(200).json(resFilter);
+  //     }
+  //   })
+  // } if (idSubcat = 2) {
+  //   connection.query("SELECT * FROM Article_subcategorie JOIN Article ON Article_subcategorie.id_article = Article.id WHERE Article_subcategorie.id_subcategorie = 2", (err, results) =>{
+  //     if (err){
+  //       res.status(500).send(`Erreur lors de la récupération de l'article!`);
+  //     } else {
+  //       const resFilter = results.filter(elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1   )
+  //     res.status(200).json(resFilter);
+  //     }
+  //   })
+  // } if (idSubcat = 3) {
+  //   connection.query("SELECT * FROM Article_subcategorie JOIN Article ON Article_subcategorie.id_article = Article.id WHERE Article_subcategorie.id_subcategorie = 3", (err, results) =>{
+  //     if (err){
+  //       res.status(500).send(`Erreur lors de la récupération de l'article!`);
+  //     } else {
+  //       const resFilter = results.filter(elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1   )
+  //     res.status(200).json(resFilter);
+  //     }
+  //   })
+  // } if (idSubcat = 4) {
+  //   connection.query("SELECT * FROM Article_subcategorie JOIN Article ON Article_subcategorie.id_article = Article.id WHERE Article_subcategorie.id_subcategorie = 4", (err, results) =>{
+  //     if (err){
+  //       res.status(500).send(`Erreur lors de la récupération de l'article!`);
+  //     } else {
+  //       const resFilter = results.filter(elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1   )
+  //     res.status(200).json(resFilter);
+  //     }
+  //   })
+  // } if (idSubcat = 5) {
+  //   connection.query("SELECT * FROM Article_subcategorie JOIN Article ON Article_subcategorie.id_article = Article.id WHERE Article_subcategorie.id_subcategorie = 4", (err, results) =>{
+  //     if (err){
+  //       res.status(500).send(`Erreur lors de la récupération de l'article!`);
+  //     } else {
+  //       const resFilter = results.filter(elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1   )
+  //     res.status(200).json(resFilter);
+  //     }
+  //   })
+  // } else {
   connection.query("SELECT * FROM Article", (err, results) => {
     if (err) {
       res.status(500).send(`Erreur lors de la récupération de l'article!`);
@@ -59,8 +105,7 @@ router.post("/search", (req, res) => {
       res.status(200).json(resFilter);
     }
   });
-});
-
+})
 //////////////////////Gérer un article/////////////////////
 router.route("/signup").post((req, res) => {
   const newData = req.body;
