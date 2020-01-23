@@ -22,6 +22,11 @@ router.get("/subcat/:id", (req, res) => {
   const idSubCat = req.params.id;
   connection.query(
     "SELECT * from Article  left join Users on Article.id_user_vendeur=Users.id left join Users as U on Article.id_user_acheteur=U.id left join  Photos on Article.id= Photos.id left join Categorie on Article.id = Categorie.id left join Sub_categorie on Article.id =Sub_categorie.id left join Article_gender on Article.id = Article_gender.id_article left join Article_age on Article.id = Article_age.id_article WHERE id_subcategorie = ?",
+// get all article from subCat
+router.get("/subcat/:id", (req, res) => {
+  const idSubCat = req.params.id;
+  connection.query(
+    "SELECT * FROM Article_subcategorie JOIN Article ON Article_subcategorie.id_article = Article.id WHERE Article_subcategorie.id_subcategorie = ?",
     idSubCat,
     (err, results) => {
       if (err) {
@@ -51,6 +56,21 @@ router.get("/:id", (req, res) => {
       }
     }
   );
+});
+
+router.post("/search", (req, res) => {
+  const name = req.body.name;
+  console.log(req.body)
+
+  connection.query("SELECT * FROM Article", (err, results) => {
+    if (err) {
+      res.status(500).send(`Erreur lors de la récupération de l'article!`);
+    } else {
+      // console.log(results)
+      const resFilter = results.filter(elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1   )
+      res.status(200).json(resFilter);
+    }
+  });
 });
 
 //////////////////////Gérer un article/////////////////////

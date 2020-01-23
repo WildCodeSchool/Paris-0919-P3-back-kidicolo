@@ -34,4 +34,23 @@ router.get("/subcat/:id", (req, res) => {
   )
 })
 
+router.get("/:name", (req, res) => {
+  const nameCategorie = req.params.name
+  connection.query(
+    "SELECT * FROM Categorie WHERE name = ?",
+    nameCategorie,
+    (err, results) => {
+      if (err) {
+        res
+          .status(500)
+          .send(`Erreur lors de la  selection de la catégorie!`)
+      } else {
+        res.status(200).json(results)
+      }
+    }
+  )
+})
+
+
+
 module.exports = router

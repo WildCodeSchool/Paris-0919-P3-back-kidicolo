@@ -22,6 +22,8 @@ app.use("/adduser", routes.adduser)
 app.use("/age", routes.age)
 app.use("/gender", routes.gender)
 app.use("/statearticle", routes.statearticle)
+app.use("/photo", routes.photo)
+
 
 app.get("/", (req, res) => {
   res.send("je suis dans la route /")
