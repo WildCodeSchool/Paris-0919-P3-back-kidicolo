@@ -3,6 +3,8 @@ const cors = require("cors")
 const morgan = require("morgan")
 const bodyParser = require("body-parser")
 const routes = require("./routes/index")
+// const cookieParser = require ("cookier-parser")
+
 
 const PORT = process.env.PORT || "5000"
 const app = express()
@@ -19,6 +21,7 @@ app.use("/subcategory", routes.subcategory)
 app.use("/adduser", routes.adduser)
 app.use("/age", routes.age)
 app.use("/gender", routes.gender)
+app.use("/statearticle", routes.statearticle)
 
 app.get("/", (req, res) => {
   res.send("je suis dans la route /")

@@ -1,5 +1,5 @@
-const express = require("express");
 const connection = require("../../config/config");
+const express = require("express");
 
 const router = express.Router();
 
@@ -55,140 +55,143 @@ router.get("/:id", (req, res) => {
 
 //////////////////////Gérer un article/////////////////////
 router.route("/addarticle").post((req, res) => {
+  console.log(
+    "je suis la =============================================== 11123123",
+    req.body
+  );
   const body = req.body.article;
   connection.beginTransaction(err => {
-    connection.query("SET FOREIGN_KEY_CHECKS = 0", body,
-      (err,results) => {
-        if(err){
-          console.log(`ici l'erreur `, err);
-          res.send("Erreur.").status(500);
+    connection.query("SET FOREIGN_KEY_CHECKS = 0", body, (err, results) => {
+      if (err) {
+        console.log("err 00 -- ", err);        
+        res.send("Erreur.").status(500);
+      } else {
+        connection.query(`INSERT INTO Article SET ?`, body, (err, results) => {
+          if (err) {
+            console.log("err 01 -- ", err);
+            res.send(err.message);
+          } else {
+            const categoriesId = req.body.categories;
+            const articleId = results.insertId;
+            console.log(articleId);
 
-        }else{
-          connection.query(`INSERT INTO Article SET ?`, body, (err, results) => {
-            if (err) {
-              console.log(req.body);
-              res.send(err.message);
-            } else {
-              const categoriesId = req.body.categories;
-              const articleId = results.insertId;
-              console.log(articleId);
-              
-             const articleCategorie = categoriesId.map(id => {
-                const line = [
-                  id,
-                  articleId
-                ]
-                return line;
-              }) 
-              console.log(articleCategorie)
-      
-              connection.query(
-                "INSERT INTO `Article_categorie`(`id_categorie`, `id_article`) VALUES ?", [articleCategorie],
-                (err, result) => {
-                  console.log(result);
-                  
-                  if (err) {
-                    console.log('cate err');
-                    
-                    connection.rollback(() => {throw err})
-                    res.send(err.message);
-                  } else {
-                    const subcategoriesId = req.body.subcategories;
-                    const articleSubcategorie = subcategoriesId.map(id => {
-                      const line =[
-                        id,
-                        articleId
-                      ]
-                      return line
-                    })
-      
-                    connection.query(
-                      "INSERT INTO `Article_subcategorie`(`id_subcategorie`, `id_article`) VALUES ? ",
-                      [articleSubcategorie],
-                      err => {
-                        if (err) {
-                          console.log('sub cat');
-                          
-                          connection.rollback(() => {throw err})
-                          res.send(err.message);
-                        } else {
-                          const  gendersId = req.body.genders;
-                          const articleGenders = gendersId.map(id => {
-                            const line =[
-                              id,
-                              articleId
-                            ]
-                            return line;
-                          })
-      
-                          connection.query(
-                            "INSERT INTO `Article_gender`(`id_gender`, `id_article`) VALUES ? ",
-                            [articleGenders],
-                            err => {
-                              if (err) {
-                                console.log('gender err');
-                                
-                                connection.rollback(() => {throw err})
-                                res.send(err.message);
-                              } else{
-                                 const agesId = req.body.ages;
-                                 const articleAges = agesId.map(id =>{
-                                const line =[
-                                    id,
-                                     articleId
-                                   ]
-                                   return  line;
-                                 })
-                                 connection.query(
-                                  "INSERT INTO `Article_age`(`id_age`, `id_article`) VALUES ?",
-                                  [articleAges],
-                                  err => {
-                                    if (err) {
-                                      console.log('age err');
-                                      
-                                      connection.rollback(() => {throw err})
-                                      res.send(err.message);
-                                    } else {
-                                      connection.commit((err) => {
-                                        if(err){
-                                          console.log('poil');
-                                          
-                                          connection.rollback(() => {throw err})
-                                        } else{
-                                          connection.query('SET FOREIGN_KEY_CHECKS=1', (err, results) => {
+            const articleCategorie = categoriesId.map(id => {
+              const line = [id, articleId];
+              return line;
+            });
+            console.log(articleCategorie);
+
+            connection.query(
+              "INSERT INTO `Article_categorie`(`id_categorie`, `id_article`) VALUES ?",
+              [articleCategorie],
+              (err, result) => {
+                console.log(result);
+
+                if (err) {
+                  console.log("err 02 -- ", err);
+
+                  connection.rollback(() => {
+                    throw err;
+                  });
+                  res.send(err.message);
+                } else {
+                  const subcategoriesId = req.body.subcategories;
+                  const articleSubcategorie = subcategoriesId.map(id => {
+                    const line = [id, articleId];
+                    return line;
+                  });
+
+                  connection.query(
+                    "INSERT INTO `Article_subcategorie`(`id_subcategorie`, `id_article`) VALUES ? ",
+                    [articleSubcategorie],
+                    err => {
+                      if (err) {
+                        console.log("sub cat");
+                        console.log("err 03 -- ", err);
+                        connection.rollback(() => {
+                          throw err;
+                        });
+                        res.send(err.message);
+                      } else {
+                        const gendersId = req.body.genders;
+                        const articleGenders = gendersId.map(id => {
+                          const line = [id, articleId];
+                          return line;
+                        });
+
+                        connection.query(
+                          "INSERT INTO `Article_gender`(`id_gender`, `id_article`) VALUES ? ",
+                          [articleGenders],
+                          err => {
+                            if (err) {
+                              console.log("gender err");
+                              console.log("err 04 -- ", err);
+                              connection.rollback(() => {
+                                throw err;
+                              });
+                              res.send(err.message);
+                            } else {
+                              const agesId = req.body.ages;
+                              const articleAges = agesId.map(id => {
+                                const line = [id, articleId];
+                                return line;
+                              });
+                              connection.query(
+                                "INSERT INTO `Article_age`(`id_age`, `id_article`) VALUES ?",
+                                [articleAges],
+                                err => {
+                                  if (err) {
+                                    console.log("age err");
+                                    console.log("err 05 -- ", err);
+                                    connection.rollback(() => {
+                                      throw err;
+                                    });
+                                    res.send(err.message);
+                                  } else {
+                                    connection.commit(err => {
+                                      if (err) {
+                                        console.log("poil");
+                                        console.log("err 06 -- ", err);
+                                        connection.rollback(() => {
+                                          throw err;
+                                        });
+                                      } else {
+                                        connection.query(
+                                          "SET FOREIGN_KEY_CHECKS=1",
+                                          (err, results) => {
                                             if (err) {
-                                              console.log(`ici l'erreur `, err);
-                                              res.send("Erreur lors de l'ajout du produit.").status(500);
+                                              console.log("err 07 -- ", err);
+                                              res
+                                                .send(
+                                                  "Erreur lors de l'ajout du produit."
+                                                )
+                                                .status(500);
                                             }
-                                            res.status(200).send('gooood')
-                                            console.log("salut les zouzous")
+                                            res.status(200).send("gooood");
+                                            console.log("salut les zouzous");
                                             connection.end();
-                                        
-                                          })
-                                        }
-                                      })
-      
-                                    }
+                                          }
+                                        );
+                                      }
+                                    });
                                   }
-                                );
+                                }
+                              );
                             }
-                        }
-                      
-                    );
-                  }
+                          }
+                        );
+                      }
+                    }
+                  );
                 }
-              );
-            
-            }
+              }
+            );
           }
-        )
+        });
       }
-    })
-  }
-})
-})
-})
-
+    });
+  });
+});
 
 router.route("/switch/:id").put((req, res) => {
   const newData = req.body;
