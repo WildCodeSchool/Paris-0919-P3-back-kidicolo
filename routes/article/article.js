@@ -74,7 +74,7 @@ router.post("/search", (req, res) => {
 });
 
 //////////////////////Gérer un article/////////////////////
-router.route("/addarticle").post((req, res) => {
+router.post("/addarticle", (req, res) => {
   console.log(
     "je suis la",
     req.body
@@ -189,7 +189,7 @@ router.route("/addarticle").post((req, res) => {
                                             }
                                             res.status(200).send("gooood");
                                             console.log("salut les zouzous");
-                                            connection.end();
+                                            // connection.end();
                                           }
                                         );
                                       }
