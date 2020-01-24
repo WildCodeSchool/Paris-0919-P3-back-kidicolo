@@ -46,14 +46,37 @@ router.get("/:id", (req, res) => {
 });
 
 ////////////////////// Route SearchBar //////////////////////////
-router.post("/search", (req, res) => {
+router.post("/search/:id_subcategorie", (req, res) => {
   const name = req.body.name;
-  const idSubcat = req.body.idSubcat
+  const id_subcategorie = req.body.idSubCat
   console.log(req.body)
+  console.log("subcatback", req.body.idSubCat)
+  if(id_subcategorie =! null){
+  connection.query("SELECT * FROM Article_subcategorie JOIN Article ON Article_subcategorie.id_article = Article.id WHERE Article_subcategorie.id_subcategorie  = ?", (err,results) => {
+    if (err) {
+      res.status(500).send(`Erreur lors de la récupération de l'article!`);
+      console.log(err)
+    } else {
+      console.log(results)
+      const resFilter = results.filter(elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1   )
+      res.status(200).json(resFilter);
+    }
+  }
+  )}else{
+    connection.query("SELECT * FROM Article", (err, results) => {
+      if (err) {
+        res.status(500).send(`Erreur lors de la récupération de l'article!`);
+      } else {
+        // console.log(results)
+        const resFilter = results.filter(elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1   )
+        res.status(200).json(resFilter);
+      }
+    })}
+  });
   // if (idSubcat = 1) {
-  //   connection.query("SELECT * FROM Article_subcategorie JOIN Article ON Article_subcategorie.id_article = Article.id WHERE Article_subcategorie.id_subcategorie = 1", (err, results) =>{
-  //     if (err){
-  //       res.status(500).send(`Erreur lors de la récupération de l'article!`);
+    //   connection.query("SELECT * FROM Article_subcategorie JOIN Article ON Article_subcategorie.id_article = Article.id WHERE Article_subcategorie.id_subcategorie = 1", (err, results) =>{
+      //     if (err){
+        //       res.status(500).send(`Erreur lors de la récupération de l'article!`);
   //     } else {
   //       const resFilter = results.filter(elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1   )
   //     res.status(200).json(resFilter);
@@ -96,16 +119,6 @@ router.post("/search", (req, res) => {
   //     }
   //   })
   // } else {
-  connection.query("SELECT * FROM Article", (err, results) => {
-    if (err) {
-      res.status(500).send(`Erreur lors de la récupération de l'article!`);
-    } else {
-      // console.log(results)
-      const resFilter = results.filter(elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1   )
-      res.status(200).json(resFilter);
-    }
-  });
-})
 //////////////////////Gérer un article/////////////////////
 router.route("/signup").post((req, res) => {
   const newData = req.body;
