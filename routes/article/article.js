@@ -88,7 +88,7 @@ router.post("/addarticle", (req, res) => {
       } else {
         const urlPhoto = req.body.urlPhoto;
         connection.query(
-          "UPDATE Photos (photourl) VALUES (?) ",
+          "INSERT INTO Photos (photourl) VALUES (?) ",
           urlPhoto,
           (err, results) => {
             if (err) {
@@ -100,7 +100,7 @@ router.post("/addarticle", (req, res) => {
               const idPhotos = results.insertId;
               const bodyModif = { ...body, id_photoart: idPhotos };
               connection.query(
-                `UPDATE Article SET ?`,
+                `INSERT INTO Article SET ?`,
                 bodyModif,
                 (err, results) => {
                   if (err) {
@@ -116,7 +116,7 @@ router.post("/addarticle", (req, res) => {
                       return line;
                     });
                     connection.query(
-                      "UPDATE `Article_categorie`(`id_categorie`, `id_article`) VALUES ?",
+                      "INSERT INTO `Article_categorie`(`id_categorie`, `id_article`) VALUES ?",
                       [articleCategorie],
                       (err, result) => {
                         if (err) {
@@ -133,7 +133,7 @@ router.post("/addarticle", (req, res) => {
                             }
                           );
                           connection.query(
-                            "UPDATE `Article_subcategorie`(`id_subcategorie`, `id_article`) VALUES ? ",
+                            "INSERT INTO `Article_subcategorie`(`id_subcategorie`, `id_article`) VALUES ? ",
                             [articleSubcategorie],
                             err => {
                               if (err) {
@@ -148,7 +148,7 @@ router.post("/addarticle", (req, res) => {
                                   return line;
                                 });
                                 connection.query(
-                                  "UPDATE `Article_gender`(`id_gender`, `id_article`) VALUES ? ",
+                                  "INSERT INTO `Article_gender`(`id_gender`, `id_article`) VALUES ? ",
                                   [articleGenders],
                                   err => {
                                     if (err) {
@@ -163,7 +163,7 @@ router.post("/addarticle", (req, res) => {
                                         return line;
                                       });
                                       connection.query(
-                                        "UPDATE `Article_age`(`id_age`, `id_article`) VALUES ?",
+                                        "INSERT INTO `Article_age`(`id_age`, `id_article`) VALUES ?",
                                         [articleAges],
                                         err => {
                                           if (err) {
