@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
   );
 });
 
-//
+//Route de Blocaus plus complète ( infos reçus) pour get subact par id
 // router.get("/subcat/:id", (req, res) => {
 //   const idSubCat = req.params.id;
 //   connection.query(
@@ -42,7 +42,7 @@ router.get("/subcat/:id", (req, res) => {
   );
 });
 
-//select one article
+//Select One Article
 router.get("/:id", (req, res) => {
   const id = req.params.id;
   connection.query(
@@ -57,7 +57,7 @@ router.get("/:id", (req, res) => {
     }
   );
 });
-
+//Search Bar for Article
 router.post("/search", (req, res) => {
   const name = req.body.name;
   console.log(req.body);
@@ -75,169 +75,297 @@ router.post("/search", (req, res) => {
   });
 });
 
-//////////////////////Gérer un article/////////////////////
+//////////////////////Ajouter  un article/////////////////////
 router.post("/addarticle", (req, res) => {
-  //       const photoInfo = req.body.photos
-  //       connection.query("INSERT INTO Photos SET ?", photoInfo, (err, results) => {
-  //         if(err) {
-  //           res.send("Erreur")
-  //         }
-  //       })
   const body = req.body.article;
-  // console.log("=============================" , { ...body, id_photoart: "niqsdkqksd" })
   connection.beginTransaction(err => {
     connection.query("SET FOREIGN_KEY_CHECKS = 0", body, (err, results) => {
       if (err) {
-        console.log("err 00 -- ", err);
+        connection.rollback(() => {
+          throw err;
+        });
         res.send("Erreur.").status(500);
       } else {
-        const urlPhotos = req.body.article.id_photoart;
+        const urlPhoto = req.body.urlPhoto;
         connection.query(
-          "INSERT INTO Photos SET ? ",urlPhotos,
+          "UPDATE Photos (photourl) VALUES (?) ",
+          urlPhoto,
           (err, results) => {
             if (err) {
-              res.send("Erreur");
-            }
-            else{
-              const idPhotos = results
-              console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",results)
-
-            }
-            const bodyModif = { ...body, id_photoart: idPhotos }
-            console.log(bodyModif)
-            connection.query(
-              `INSERT INTO Article SET ?`,
-              bodyModif,
-              (err, results) => {
-                if (err) {
-                  console.log("err 01 -- ", err);
-                  res.send(err.message);
-                } else {
-                  const categoriesId = req.body.categories;
-                  const articleId = results.insertId;
-                  console.log(articleId);
-
-                  const articleCategorie = categoriesId.map(id => {
-                    const line = [id, articleId];
-                    return line;
-                  });
-                  console.log(articleCategorie);
-
-                  connection.query(
-                    "INSERT INTO `Article_categorie`(`id_categorie`, `id_article`) VALUES ?",
-                    [articleCategorie],
-                    (err, result) => {
-                      console.log(result);
-
-                      if (err) {
-                        console.log("err 02 -- ", err);
-
-                        connection.rollback(() => {
-                          throw err;
-                        });
-                        res.send(err.message);
-                      } else {
-                        const subcategoriesId = req.body.subcategories;
-                        const articleSubcategorie = subcategoriesId.map(id => {
-                          const line = [id, articleId];
-                          return line;
-                        });
-
-                        connection.query(
-                          "INSERT INTO `Article_subcategorie`(`id_subcategorie`, `id_article`) VALUES ? ",
-                          [articleSubcategorie],
-                          err => {
-                            if (err) {
-                              console.log("sub cat");
-                              console.log("err 03 -- ", err);
-                              connection.rollback(() => {
-                                throw err;
-                              });
-                              res.send(err.message);
-                            } else {
-                              const gendersId = req.body.genders;
-                              const articleGenders = gendersId.map(id => {
-                                const line = [id, articleId];
-                                return line;
-                              });
-
-                              connection.query(
-                                "INSERT INTO `Article_gender`(`id_gender`, `id_article`) VALUES ? ",
-                                [articleGenders],
-                                err => {
-                                  if (err) {
-                                    console.log("gender err");
-                                    console.log("err 04 -- ", err);
-                                    connection.rollback(() => {
-                                      throw err;
-                                    });
-                                    res.send(err.message);
-                                  } else {
-                                    const agesId = req.body.ages;
-                                    const articleAges = agesId.map(id => {
-                                      const line = [id, articleId];
-                                      return line;
-                                    });
-                                    connection.query(
-                                      "INSERT INTO `Article_age`(`id_age`, `id_article`) VALUES ?",
-                                      [articleAges],
-                                      err => {
-                                        if (err) {
-                                          console.log("age err");
-                                          console.log("err 05 -- ", err);
-                                          connection.rollback(() => {
-                                            throw err;
-                                          });
-                                          res.send(err.message);
-                                        } else {
-                                          connection.commit(err => {
-                                            if (err) {
-                                              console.log("poil");
-                                              console.log("err 06 -- ", err);
-                                              connection.rollback(() => {
-                                                throw err;
-                                              });
-                                            } else {
-                                              connection.query(
-                                                "SET FOREIGN_KEY_CHECKS=1",
-                                                (err, results) => {
-                                                  if (err) {
-                                                    console.log(
-                                                      "err 07 -- ",
-                                                      err
-                                                    );
-                                                    res
-                                                      .send(
-                                                        "Erreur lors de l'ajout du produit."
-                                                      )
-                                                      .status(500);
-                                                  }
-                                                  res
-                                                    .status(200)
-                                                    .send("gooood");
-                                                  console.log(
-                                                    "salut les zouzous"
-                                                  );
-                                                  // connection.end();
-                                                }
-                                              );
-                                            }
-                                          });
-                                        }
-                                      }
-                                    );
-                                  }
-                                }
-                              );
+              connection.rollback(() => {
+                throw err;
+              });
+              res.send("Erreur.").status(500);
+            } else {
+              const idPhotos = results.insertId;
+              const bodyModif = { ...body, id_photoart: idPhotos };
+              connection.query(
+                `UPDATE Article SET ?`,
+                bodyModif,
+                (err, results) => {
+                  if (err) {
+                    connection.rollback(() => {
+                      throw err;
+                    });
+                    res.send("Erreur.").status(500);
+                  } else {
+                    const categoriesId = req.body.categories;
+                    const articleId = results.insertId;
+                    const articleCategorie = categoriesId.map(id => {
+                      const line = [id, articleId];
+                      return line;
+                    });
+                    connection.query(
+                      "UPDATE `Article_categorie`(`id_categorie`, `id_article`) VALUES ?",
+                      [articleCategorie],
+                      (err, result) => {
+                        if (err) {
+                          connection.rollback(() => {
+                            throw err;
+                          });
+                          res.send("Erreur.").status(500);
+                        } else {
+                          const subcategoriesId = req.body.subcategories;
+                          const articleSubcategorie = subcategoriesId.map(
+                            id => {
+                              const line = [id, articleId];
+                              return line;
                             }
-                          }
-                        );
+                          );
+                          connection.query(
+                            "UPDATE `Article_subcategorie`(`id_subcategorie`, `id_article`) VALUES ? ",
+                            [articleSubcategorie],
+                            err => {
+                              if (err) {
+                                connection.rollback(() => {
+                                  throw err;
+                                });
+                                res.send("Erreur.").status(500);
+                              } else {
+                                const gendersId = req.body.genders;
+                                const articleGenders = gendersId.map(id => {
+                                  const line = [id, articleId];
+                                  return line;
+                                });
+                                connection.query(
+                                  "UPDATE `Article_gender`(`id_gender`, `id_article`) VALUES ? ",
+                                  [articleGenders],
+                                  err => {
+                                    if (err) {
+                                      connection.rollback(() => {
+                                        throw err;
+                                      });
+                                      res.send("Erreur.").status(500);
+                                    } else {
+                                      const agesId = req.body.ages;
+                                      const articleAges = agesId.map(id => {
+                                        const line = [id, articleId];
+                                        return line;
+                                      });
+                                      connection.query(
+                                        "UPDATE `Article_age`(`id_age`, `id_article`) VALUES ?",
+                                        [articleAges],
+                                        err => {
+                                          if (err) {
+                                            connection.rollback(() => {
+                                              throw err;
+                                            });
+                                            res.send("Erreur.").status(500);
+                                          } else {
+                                            connection.commit(err => {
+                                              if (err) {
+                                                connection.rollback(() => {
+                                                  throw err;
+                                                });
+                                                res.send("Erreur.").status(500);
+                                              } else {
+                                                connection.query(
+                                                  "SET FOREIGN_KEY_CHECKS=1",
+                                                  (err, results) => {
+                                                    if (err) {
+                                                      connection.rollback(
+                                                        () => {
+                                                          throw err;
+                                                        }
+                                                      );
+                                                      res
+                                                        .send("Erreur.")
+                                                        .status(500);
+                                                    }
+                                                    res
+                                                      .status(200)
+                                                      .send("gooood");
+                                                    // connection.end();
+                                                  }
+                                                );
+                                              }
+                                            });
+                                          }
+                                        }
+                                      );
+                                    }
+                                  }
+                                );
+                              }
+                            }
+                          );
+                        }
                       }
-                    }
-                  );
+                    );
+                  }
                 }
-              }
-            );
+              );
+            }
+          }
+        );
+      }
+    });
+  });
+});
+
+
+
+router.put("/updatearticle/:id", (req, res) => {
+  const id = req.params.id
+  const body = req.body.article;
+  connection.beginTransaction(err => {
+    connection.query("SET FOREIGN_KEY_CHECKS = 0", body,id, (err, results) => {
+      if (err) {
+        connection.rollback(() => {
+          throw err;
+        });
+        res.send("Erreur.").status(500);
+      } else {
+        const urlPhoto = req.body.urlPhoto;
+        connection.query(
+          "UPDATE Photos (photourl) VALUES (?) WHERE id = ?",
+          urlPhoto, id,
+          (err, results) => {
+            if (err) {
+              connection.rollback(() => {
+                throw err;
+              });
+              res.send("Erreur.").status(500);
+            } else {
+              const idPhotos = results.insertId;
+              const bodyModif = { ...body, id_photoart: idPhotos };
+              connection.query(
+                `UPDATE Article SET ? WHERE id = ?`,
+                bodyModif, id ,
+                (err, results) => {
+                  if (err) {
+                    connection.rollback(() => {
+                      throw err;
+                    });
+                    res.send("Erreur.").status(500);
+                  } else {
+                    const categoriesId = req.body.categories;
+                    const articleId = results.insertId;
+                    const articleCategorie = categoriesId.map(id => {
+                      const line = [id, articleId];
+                      return line;
+                    });
+                    connection.query(
+                      "UPDATE `Article_categorie`(`id_categorie`, `id_article`) VALUES ? WHERE id = ?" ,
+                      [articleCategorie],id,
+                      (err, result) => {
+                        if (err) {
+                          connection.rollback(() => {
+                            throw err;
+                          });
+                          res.send("Erreur.").status(500);
+                        } else {
+                          const subcategoriesId = req.body.subcategories;
+                          const articleSubcategorie = subcategoriesId.map(
+                            id => {
+                              const line = [id, articleId];
+                              return line;
+                            }
+                          );
+                          connection.query(
+                            "UPDATE `Article_subcategorie`(`id_subcategorie`, `id_article`) VALUES ? WHERE id = ? ",
+                            [articleSubcategorie],id,
+                            err => {
+                              if (err) {
+                                connection.rollback(() => {
+                                  throw err;
+                                });
+                                res.send("Erreur.").status(500);
+                              } else {
+                                const gendersId = req.body.genders;
+                                const articleGenders = gendersId.map(id => {
+                                  const line = [id, articleId];
+                                  return line;
+                                });
+                                connection.query(
+                                  "UPDATE `Article_gender`(`id_gender`, `id_article`) VALUES ? WHERE id = ? ",
+                                  [articleGenders],id,
+                                  err => {
+                                    if (err) {
+                                      connection.rollback(() => {
+                                        throw err;
+                                      });
+                                      res.send("Erreur.").status(500);
+                                    } else {
+                                      const agesId = req.body.ages;
+                                      const articleAges = agesId.map(id => {
+                                        const line = [id, articleId];
+                                        return line;
+                                      });
+                                      connection.query(
+                                        "UPDATE `Article_age`(`id_age`, `id_article`) VALUES ? WHERE id = ?",
+                                        [articleAges],id,
+                                        err => {
+                                          if (err) {
+                                            connection.rollback(() => {
+                                              throw err;
+                                            });
+                                            res.send("Erreur.").status(500);
+                                          } else {
+                                            connection.commit(err => {
+                                              if (err) {
+                                                connection.rollback(() => {
+                                                  throw err;
+                                                });
+                                                res.send("Erreur.").status(500);
+                                              } else {
+                                                connection.query(
+                                                  "SET FOREIGN_KEY_CHECKS=1",
+                                                  (err, results) => {
+                                                    if (err) {
+                                                      connection.rollback(
+                                                        () => {
+                                                          throw err;
+                                                        }
+                                                      );
+                                                      res
+                                                        .send("Erreur.")
+                                                        .status(500);
+                                                    }
+                                                    res
+                                                      .status(200)
+                                                      .send("gooood");
+                                                    // connection.end();
+                                                  }
+                                                );
+                                              }
+                                            });
+                                          }
+                                        }
+                                      );
+                                    }
+                                  }
+                                );
+                              }
+                            }
+                          );
+                        }
+                      }
+                    );
+                  }
+                }
+              );
+            }
           }
         );
       }
