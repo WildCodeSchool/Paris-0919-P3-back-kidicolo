@@ -80,6 +80,39 @@ router.post("/search", (req, res) => {
   });
 });
 
+////////////////////// Route SearchBar //////////////////////////
+router.post(`/search/`, (req, res) => {
+  const name = req.body[1].name;
+  const bodySafe = req.body[0].idSubcat;
+  if (req.body[0].idSubcat !== null) {
+    connection.query(
+      `SELECT * FROM Article_subcategorie JOIN Article ON Article_subcategorie.id_article = Article.id WHERE Article_subcategorie.id_subcategorie = ? `,
+      bodySafe,
+      (err, results) => {
+        if (err) {
+          res.status(500).send(`Erreur lors de la récupération de l'article!`);
+        } else {
+          const resFilter = results.filter(
+            elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1
+          );
+          res.status(200).json(resFilter);
+        }
+      }
+    );
+  } else {
+    connection.query("SELECT * FROM Article", (err, results) => {
+      if (err) {
+        res.status(500).send(`Erreur lors de la récupération de l'article!`);
+      } else {
+        const resFilter = results.filter(
+          elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1
+        );
+        res.status(200).json(resFilter);
+      }
+    });
+  }
+});
+
 //////////////////////Ajouter  un article/////////////////////
 router.post("/addarticle", (req, res) => {
   const body = req.body.article;
