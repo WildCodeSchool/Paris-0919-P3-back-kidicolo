@@ -2,6 +2,8 @@ const express = require("express");
 const connection = require("../../config/config");
 const router = express.Router();
 
+
+
 //select all article
 router.get("/", (req, res) => {
   connection.query("SELECT * FROM Article", (err, results) => {
