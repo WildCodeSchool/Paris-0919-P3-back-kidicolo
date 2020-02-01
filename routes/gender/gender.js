@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
       if (err) {
         res
           .status(500)
-          .send(`Erreur lors de la selection de la catégorie !`)
+          .send(`Erreur lors de la selection du genre !`)
       } else {
         res.status(200).json(results)
       }

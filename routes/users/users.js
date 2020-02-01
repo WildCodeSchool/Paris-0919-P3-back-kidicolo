@@ -3,7 +3,7 @@ const connection = require("../../config/config");
 const router = express.Router();
 var bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const jwtSecret = process.env.jwtSecret
+const jwtSecret = process.env.jwtSecret;
 
 router.route("/getinfo/:id").get((req, res) => {
   const id = req.params.id;
@@ -34,47 +34,54 @@ router.route("/signup").post((req, res) => {
     if (err) {
       res
         .status(500)
-        .send(`Erreur lors de la récupération de la liste des users !!`);
+        .send(`Erreur lors de l'inscription !!`);
     } else {
       res.status(200).json(results);
     }
   });
 });
 
-
-
-
 router.route("/login").post((req, res) => {
-  const mail = req.body.mail
-  const password = req.body.password 
-  connection.query(`SELECT * FROM  Users WHERE mail = ?`, mail, (err, result)=>{
-    if (err) {
-      return res.status(500).send(err)
-    } else if (!result[0]){
-      return res.status(401).send('Unauthorized user')
+  const mail = req.body.mail;
+  const password = req.body.password;
+
+  if (!mail) {
+    return res.status(409).send("Unkown user");
+  }
+
+  connection.query(
+    `SELECT * FROM  Users WHERE mail = ?`,
+    mail,
+    (err, result) => {
+      if (err) {
+        return res.status(500).send(err);
+      } else if (!result[0]) {
+        return res.status(401).send("Unauthorized user");
+      }
+      const passwordIsValid = bcrypt.compareSync(password, result[0].password);
+      if (!passwordIsValid || result.length < 0) {
+        return res.status(401).send({ auth: false, token: null });
+      } else {
+        const token = jwt.sign(
+          {
+            id: result[0].id,
+            firstname: result[0].firstname,
+            mail: result[0].mail
+          },
+          jwtSecret,
+          {
+            expiresIn: "1h" // expires in 1 hours
+          },
+          { algorithm: "RS256" }
+        );
+        res.header("Access-Control-Expose-Headers", "x-access-token");
+        res.set("token", token);
+        res.status(200).send("Authentification check",{ auth: true });
+        console.log(token);
+      }
     }
-    const passwordIsValid = bcrypt.compareSync(password, result[0].password);
-    if (!passwordIsValid  || result.length < 0){
-      return res.status(401).send({ auth: false, token: null });
-    }else{
-    const token = jwt.sign(
-      {id : result[0].id, firstname: result[0].firstname, mail: result[0].mail},
-      jwtSecret,
-      {
-        expiresIn: '1h'// expires in 1 hours
-      },
-      { algorithm: 'RS256' }
-    );
-    res.header("Access-Control-Expose-Headers", "x-access-token")
-    res.set("x-access-token", token)
-    res.status(200).send({ auth: true })
-    console.log(token)
-  }});
-})
-
-
-  
-  
+  );
+});
 
 router.route("/switch/:id").put((req, res) => {
   const user = {
@@ -95,7 +102,7 @@ router.route("/switch/:id").put((req, res) => {
       if (err) {
         res
           .status(500)
-          .send(`Erreur lors de la récupération de la liste des users !!`);
+          .send(`Erreur lors de la modification des paramètres du user !!`);
       } else {
         res.status(200).json(results);
       }
@@ -110,7 +117,7 @@ router.route("/delete/:id").delete((req, res) => {
     if (err) {
       res
         .status(500)
-        .send(`Erreur lors de la récupération de la liste des users !!`);
+        .send(`Erreur lors de la récupération de la suppression du user !!`);
     } else {
       res.status(200).json(results);
     }

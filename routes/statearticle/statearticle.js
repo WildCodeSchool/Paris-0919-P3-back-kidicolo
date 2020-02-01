@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
     "SELECT * from State",
     (err, results) => {
       if (err) {
-        res.status(500).send(`Erreur lors de la récupération des articles!`);
+        res.status(500).send(`Erreur lors de la récupération de l'état!`);
       } else {
         res.status(200).json(results);
       }
