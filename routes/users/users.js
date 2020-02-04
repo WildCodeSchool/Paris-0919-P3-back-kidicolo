@@ -32,9 +32,7 @@ router.route("/signup").post((req, res) => {
   connection.query("INSERT INTO Users SET ?", user, (err, results) => {
     console.log(err);
     if (err) {
-      res
-        .status(500)
-        .send(`Erreur lors de l'inscription !!`);
+      res.status(500).send(`Erreur lors de l'inscription !!`);
     } else {
       res.status(200).json(results);
     }
@@ -46,7 +44,8 @@ router.route("/login").post((req, res) => {
   const password = req.body.password;
 
   if (!mail) {
-    return res.status(409).send("Unkown user");
+    console.log(req.body)
+    return res.status(409).send("Unknown user");
   }
 
   connection.query(
@@ -54,7 +53,7 @@ router.route("/login").post((req, res) => {
     mail,
     (err, result) => {
       if (err) {
-        return res.status(500).send(err);
+        return res.status(500).send(err,"Les champs ne sont pas remplis");
       } else if (!result[0]) {
         return res.status(401).send("Unauthorized user");
       }
@@ -76,7 +75,7 @@ router.route("/login").post((req, res) => {
         );
         res.header("Access-Control-Expose-Headers", "x-access-token");
         res.set("token", token);
-        res.status(200).send("Authentification check",{ auth: true });
+        res.status(200).send({ auth: true });
         console.log(token);
       }
     }

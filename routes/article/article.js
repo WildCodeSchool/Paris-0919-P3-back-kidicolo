@@ -37,6 +37,26 @@ router.get("/subcat/:id", (req, res) => {
   );
 });
 
+//get all article from Cat
+router.get("/category/:id", (req, res) => {
+  const idSubCat = req.params.id;
+  connection.query(
+    "SELECT * FROM Article_categorie JOIN Article ON Article_categorie.id_article = Article.id WHERE Article_categorie.id_categorie = ?",
+    idSubCat,
+    (err, results) => {
+      if (err) {
+        res
+          .status(500)
+          .send(
+            `Erreur lors de la récupération  des articles lors de la séléction de la sous catégorie !`
+          );
+      } else {
+        res.status(200).json(results);
+      }
+    }
+  );
+});
+
 //Select One Article
 router.get("/:id", (req, res) => {
   const id = req.params.id;
@@ -63,7 +83,7 @@ router.post(`/search`, (req, res) => {
       bodySafe,
       (err, results) => {
         if (err) {
-          res.status(500).send(`Erreur lors de la récupération de l'article!`);
+          res.status(500).send(`Erreur lors de la récupération de l'article via la searchbar!`);
         } else {
           const resFilter = results.filter(
             elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1
@@ -75,7 +95,7 @@ router.post(`/search`, (req, res) => {
   } else {
     connection.query("SELECT * FROM Article", (err, results) => {
       if (err) {
-        res.status(500).send(`Erreur lors de la récupération de l'article!`);
+        res.status(500).send(`Erreur lors de la récupération des articles !`);
       } else {
         const resFilter = results.filter(
           elem => elem.name.toLowerCase().indexOf(name.toLowerCase()) > -1
